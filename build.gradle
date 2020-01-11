@@ -6,7 +6,7 @@ defaultTasks 'jar'
 
 archivesBaseName = 'fjage-sentuator'
 group = 'com.github.org-arl'
-version = new File('VERSION').text.trim()
+version = project.file('VERSION').text.trim()
 
 targetCompatibility = 1.8
 sourceCompatibility = 1.8
