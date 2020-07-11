@@ -1,7 +1,7 @@
 package org.arl.fjage.sentuator
 
-import java.util.logging.Level
 import org.arl.fjage.*
+import java.util.logging.Level
 
 /**
  * Sentuator agent base class.
@@ -24,7 +24,7 @@ class Sentuator extends Agent {
   @Override
   void init() {
     ntf = topic()
-    register(org.arl.fjage.sentuator.Services.SENTUATOR)
+    register(Services.SENTUATOR)
     setup()
     add new OneShotBehavior() {
       @Override
@@ -243,7 +243,7 @@ class Sentuator extends Agent {
    * Get the current log level for the agent.
    */
   Level getLogLevel() {
-    Level lvl = log.getLevel()
+    def lvl = log.getLevel()
     if (lvl == null && log.getParent() != null) lvl = log.getParent().getLevel()
     return lvl
   }

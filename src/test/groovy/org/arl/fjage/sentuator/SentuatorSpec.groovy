@@ -1,7 +1,18 @@
-import spock.lang.*
-import org.arl.fjage.*
+import org.arl.fjage.Container
+import org.arl.fjage.Performative
+import org.arl.fjage.Platform
+import org.arl.fjage.RealTimePlatform
 import org.arl.fjage.remote.Gateway
-import org.arl.fjage.sentuator.*
+import org.arl.fjage.sentuator.ActuationReq
+import org.arl.fjage.sentuator.ConfigurationReq
+import org.arl.fjage.sentuator.Measurement
+import org.arl.fjage.sentuator.MeasurementReq
+import org.arl.fjage.sentuator.Sentuator
+import org.arl.fjage.sentuator.Services
+import org.arl.fjage.sentuator.Status
+import org.arl.fjage.sentuator.StatusReq
+import spock.lang.Shared
+import spock.lang.Specification
 
 class SentuatorSpec extends Specification {
 
@@ -83,12 +94,12 @@ class SentuatorSpec extends Specification {
 
   def "must advertise service" () {
     expect:
-      gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)?.name == aut.name
+      gw.agentForService(Services.SENTUATOR)?.name == aut.name
   }
 
   def "status OK" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       def rsp = gw.request new StatusReq(recipient: aid)
     then:
       rsp.status == Status.OK
@@ -97,7 +108,7 @@ class SentuatorSpec extends Specification {
 
   def "basic actuation and measurement" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       def rsp1 = aid << new ActuationReq(1.0)
       def rsp2 = aid << new MeasurementReq()
       def rsp3 = aid << new ActuationReq(2.0)
@@ -117,7 +128,7 @@ class SentuatorSpec extends Specification {
 
   def "typed actuation and measurement" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       def rsp1 = aid << new ActuationReq(7.0)
       def rsp2 = aid << new MeasurementReq('special')
       def rsp3 = aid << new ActuationReq('special', 2.0)
@@ -139,7 +150,7 @@ class SentuatorSpec extends Specification {
 
   def "disable and enable" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       aid << new ConfigurationReq().set('enable', false)
       def rsp1 = aid << new StatusReq()
       def rsp2 = aid << new MeasurementReq()
@@ -161,7 +172,7 @@ class SentuatorSpec extends Specification {
 
   def "get configuration" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       def rsp1 = aid << new ConfigurationReq().get('ofs')
       def rsp2 = aid << new ConfigurationReq().get('missing')
       def rsp3 = aid << new ConfigurationReq().get('missing').get('ofs')
@@ -180,7 +191,7 @@ class SentuatorSpec extends Specification {
 
   def "set configuration" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       aid << new ActuationReq(1.0)
       def rsp1 = aid << new ConfigurationReq().set('ofs', 1.0)
       def rsp2 = aid << new MeasurementReq()
@@ -203,7 +214,7 @@ class SentuatorSpec extends Specification {
 
   def "status management" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       def rsp1 = aid << new StatusReq()
       def rsp2 = aid << new ActuationReq('bad', true)
       def rsp3 = aid << new StatusReq()
@@ -222,7 +233,7 @@ class SentuatorSpec extends Specification {
 
   def "polling" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       gw.subscribe(gw.topic(aid))
       aid << new ActuationReq(1.0)
       aid << new ConfigurationReq().set("poll", 100)
@@ -248,7 +259,7 @@ class SentuatorSpec extends Specification {
 
   def "sentuator name" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       def rsp1 = aid << new ConfigurationReq().get(Sentuator.NAME)
       aut.sentuatorName = 'MySentuator'
       def rsp2 = aid << new ConfigurationReq().get(Sentuator.NAME)
@@ -262,7 +273,7 @@ class SentuatorSpec extends Specification {
 
   def "groovy extensions" () {
     given:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       aid.actuate(1.0)
       def cfg = aid.config.toString()
       println(cfg)
@@ -277,7 +288,7 @@ class SentuatorSpec extends Specification {
 
   def "groovy extensions setter" () {
     when:
-      def aid = gw.agentForService(org.arl.fjage.sentuator.Services.SENTUATOR)
+      def aid = gw.agentForService(Services.SENTUATOR)
       aid.config.enable = false
       def c1 = aid.config.enable
       def s1 = aid.status

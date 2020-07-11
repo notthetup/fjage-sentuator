@@ -21,9 +21,9 @@ class Measurement extends Message {
   String toString() {
     StringBuffer sb = new StringBuffer()
     sb.append(getClass().getSimpleName() + ':' + performative + '[')
-    boolean first = true
+    def first = true
     this.properties.each { k, v ->
-      if (!(k in ['class', 'sender', 'recipient', 'messageID', 'performative', 'inReplyTo'])) {
+      if (!((String)k in ['class', 'sender', 'recipient', 'messageID', 'performative', 'inReplyTo'])) {
         if (!first) sb.append(' ')
         sb.append("${k}:${v}")
         first = false
